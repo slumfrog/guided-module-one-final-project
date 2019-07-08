@@ -25,17 +25,17 @@ ActiveRecord::Schema.define(version: 20190707160308) do
   end
 
   create_table "gigs", force: :cascade do |t|
-    t.integer "fan_id"
-    t.integer "artist_id"
-    t.string  "name"
-    t.string  "city"
-    t.string  "venue"
-    t.text    "address"
-    t.string  "postcode"
-    t.integer "date"
-    t.integer "start_time"
-    t.integer "end_time"
-    t.boolean "past"
+    t.integer  "fan_id"
+    t.integer  "artist_id"
+    t.string   "name"
+    t.string   "city"
+    t.string   "venue"
+    t.text     "address"
+    t.string   "postcode"
+    t.datetime "date"
+    t.integer  "start_time"
+    t.integer  "end_time"
+    t.boolean  "past"
   end
 
 end

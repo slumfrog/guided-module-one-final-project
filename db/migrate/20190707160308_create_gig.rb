@@ -8,7 +8,7 @@ class CreateGig < ActiveRecord::Migration[5.0]
       t.string :venue
       t.text :address
       t.string :postcode
-      t.integer :date
+      t.datetime :date 
       t.integer :start_time
       t.integer :end_time
       t.boolean :past

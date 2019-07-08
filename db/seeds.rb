@@ -1,5 +1,3 @@
-
-
 10.times do 
     Artist.create(name: Faker::Music::RockBand.name, genre: Faker::Music.genre)
 end
@@ -15,6 +13,6 @@ puts "Fans seeded"
 30.times do
     fan = Fan.all.sample
     artist = Artist.all.sample
-    Gig.create(fan: fan, artist: artist, name: Faker::Music.band, city: Faker::Address.city)
+    Gig.create(fan: fan, artist: artist, name: Faker::Music.band, city: Faker::Address.city, date: Faker::Time.backward(14, :all))
 end
 puts "Gigs seeded"
