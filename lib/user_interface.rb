@@ -1,8 +1,8 @@
 def welcome
     prompt = TTY::Prompt.new
     choices = ["Existing", "New Fan"]
-    user = prompt.select("Welcome to MyGigs! Are you a new, or existing fan?", choices)
-    if user == "New Fan"
+    choice = prompt.select("Welcome to MyGigs! Are you a new, or existing fan?", choices)
+    if choice == "New Fan"
         new_fan
     else
         user_login
@@ -12,9 +12,18 @@ end
 def user_login # set up if statement - if no errors, continue, otherwise puts error and call method on itself again
     prompt = TTY::Prompt.new
     username = prompt.ask('Please enter your username', default: ENV['username'])
-    password = prompt.mask('Please enter your password', default: ENV['password'])
-    fan = Fan.username_validation(username)
-    if fan.password_validation(password) 
+    if fan = Fan.username_validation(username)
+        password_login(fan)
+    else
+        puts "This username is not in our database, please try again or create a new account"
+        user_login
+    end
+end
+
+def password_login(fan) # set up if statement - if no errors, continue, otherwise puts error and call method on itself again
+    prompt = TTY::Prompt.new
+    password = prompt.mask('Please enter your password', default: ENV['username'])
+    if password = fan.password_validation(password) 
         main_menu
     else
         puts "Username and password don't match, please try again"
@@ -33,18 +42,25 @@ def new_fan
     main_menu
 end
 
-def add_gig
+
+
+def main_menu
     prompt = TTY::Prompt.new
-    name = prompt.ask('Please enter the name of the concert/tour', default: ENV['USER'])
-    artist = prompt.ask('Which artist is performing?')
-    city = prompt.ask('Which city is the concert in?', default: ENV['USER'])
-    venue = prompt.ask('What is the venue name?', default: ENV['USER'])
-    address = prompt.mask('What is the address of the venue?', default: ENV['USER'])
-    postcode = prompt.ask('What is the postcode of the venue?', default: ENV['USER'])
-    date = prompt.ask('What date is the gig?', default: ENV['MM-DD-YY'])
-    start_time = prompt.ask('What time does the gig start?', default: ENV['USER'])
-    end_time = prompt.mask('What time does the gig end?', default: ENV['USER'])
-    Gig.create(name: name, city: last_name, username: username, password: password)
+    choices = ["Add Gig", "Delete Gig", "View All Gigs", "View Future Gigs", "View Past Gigs", "Logout"]
+    choice = prompt.select("Please select from the following", choices)
+        if choice == "Add Gig"
+            add_gig
+        elsif choice == "Delete Gig"
+            delete_gig
+        elsif choice == "View All Gigs"
+            view_all_gigs
+        elsif choice == "View Future Gigs"
+            view_future_gigs
+        elsif user == "View Past Gigs"
+            view_past_gigs
+        elsif user == "Logout"
+            welcome
+        end
 end
 
 def delete_gig
@@ -63,22 +79,18 @@ def view_future_gigs
     puts "Future Gigs"
 end
 
-def main_menu
+
+def add_gig
     prompt = TTY::Prompt.new
-    choices = ["Add Gig", "Delete Gig", "View All Gigs", "View Future Gigs", "View Past Gigs", "Logout"]
-    user = prompt.select("Please select from the following", choices)
-    if user == "Add gig"
-        add_gig
-    elsif user == "View All Gigs"
-        view_all_gigs
-    elsif user == "View Future Gigs"
-        view_future_gigs
-    elsif user == "View Past Gigs"
-        view_past_gigs
-    elsif user == "Logout"
-        welcome
-    end
+    name = prompt.ask('Please enter the name of the concert/tour', default: ENV['USER'])
+    # artist = prompt.ask('Which artist is performing?')
+    city = prompt.ask('Which city is the concert in?', default: ENV['USER'])
+    venue = prompt.ask('What is the venue name?', default: ENV['USER'])
+    address = prompt.ask('What is the address of the venue?', default: ENV['USER'])
+    # postcode = prompt.ask('What is the postcode of the venue?', default: ENV['USER'])
+    date = prompt.ask('What date is the gig?')
+    # start_time = prompt.ask('What time does the gig start?', default: ENV['USER'])
+    # end_time = prompt.ask('What time does the gig end?', default: ENV['USER'])
+    Gig.create(name: name, city: city, venue: venue, address: address, date: date)
+    main_menu
 end
-
-
-

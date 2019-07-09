@@ -11,13 +11,16 @@ class Fan < ActiveRecord::Base
    end
 
    def self.username_validation(user_input)
-      self.all.find_by(username: user_input)
+       self.all.find_by(username: user_input)
    end
 
    def password_validation(user_input)
       self.password == user_input
    end
 
+   def self.fan_first_names
+      self.all.map {|fan| fan.first_name}
+   end
 
 end
 
