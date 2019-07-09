@@ -1,3 +1,11 @@
+class UserInterface
+
+    def initialize
+        @artist = nil
+        @fan = nil
+        @gig = nil
+    end
+
 def welcome
     prompt = TTY::Prompt.new
     choices = ["Existing", "New Fan"]
@@ -12,19 +20,20 @@ end
 def user_login # set up if statement - if no errors, continue, otherwise puts error and call method on itself again
     prompt = TTY::Prompt.new
     username = prompt.ask('Please enter your username', default: ENV['username'])
-    if fan = Fan.username_validation(username)
-        password_login(fan)
+    if @fan = Fan.username_validation(username)
+        password_login
     else
         puts "This username is not in our database, please try again or create a new account"
         user_login
     end
 end
 
-def password_login(fan) # set up if statement - if no errors, continue, otherwise puts error and call method on itself again
+def password_login # set up if statement - if no errors, continue, otherwise puts error and call method on itself again
     prompt = TTY::Prompt.new
     password = prompt.mask('Please enter your password', default: ENV['username'])
-    if password = fan.password_validation(password) 
+    if password = @fan.password_validation(password) 
         main_menu
+        binding.pry
     else
         puts "Username and password don't match, please try again"
         user_login
@@ -56,9 +65,9 @@ def main_menu
             view_all_gigs
         elsif choice == "View Future Gigs"
             view_future_gigs
-        elsif user == "View Past Gigs"
+        elsif choice == "View Past Gigs"
             view_past_gigs
-        elsif user == "Logout"
+        elsif choice == "Logout"
             welcome
         end
 end
@@ -72,18 +81,19 @@ def view_all_gigs
 end
 
 def view_past_gigs
-    puts "View Past Gigs"
+    puts "Past Gigs"
 end
 
 def view_future_gigs
     puts "Future Gigs"
 end
 
-
 def add_gig
     prompt = TTY::Prompt.new
     name = prompt.ask('Please enter the name of the concert/tour', default: ENV['USER'])
-    # artist = prompt.ask('Which artist is performing?')
+    artist_prompt = prompt.ask('Which artist is performing?')
+    artist = Artist.find_artist(artist_prompt)
+    fan_id = @fan.id
     city = prompt.ask('Which city is the concert in?', default: ENV['USER'])
     venue = prompt.ask('What is the venue name?', default: ENV['USER'])
     address = prompt.ask('What is the address of the venue?', default: ENV['USER'])
@@ -91,6 +101,8 @@ def add_gig
     date = prompt.ask('What date is the gig?')
     # start_time = prompt.ask('What time does the gig start?', default: ENV['USER'])
     # end_time = prompt.ask('What time does the gig end?', default: ENV['USER'])
-    Gig.create(name: name, city: city, venue: venue, address: address, date: date)
+    Gig.create(name: name, city: city, venue: venue, address: address, date: date, artist: artist, fan_id: fan_id) 
     main_menu
+end
+
 end

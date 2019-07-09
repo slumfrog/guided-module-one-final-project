@@ -1,6 +1,7 @@
 require_relative '../config/environment.rb'
 
-welcome
+app = UserInterface.new
+app.welcome 
 
 binding.pry
 0

@@ -22,6 +22,11 @@ class Fan < ActiveRecord::Base
       self.all.map {|fan| fan.first_name}
    end
 
+
+
+#    def self.view_my_gigs
+#    end
+
 end
 
 
