@@ -31,9 +31,8 @@ end
 def password_login # set up if statement - if no errors, continue, otherwise puts error and call method on itself again
     prompt = TTY::Prompt.new
     password = prompt.mask('Please enter your password', default: ENV['username'])
-    if password = @fan.password_validation(password) 
+    if @fan.password_validation(password) 
         main_menu
-        binding.pry
     else
         puts "Username and password don't match, please try again"
         user_login
@@ -55,7 +54,7 @@ end
 
 def main_menu
     prompt = TTY::Prompt.new
-    choices = ["Add Gig", "Delete Gig", "View All Gigs", "View Future Gigs", "View Past Gigs", "Logout"]
+    choices = ["Add Gig", "Delete Gig", "View All Gigs", "View Future Gigs", "View Past Gigs", "View Past Gig Artists", "Logout"]
     choice = prompt.select("Please select from the following", choices)
         if choice == "Add Gig"
             add_gig
@@ -67,26 +66,51 @@ def main_menu
             view_future_gigs
         elsif choice == "View Past Gigs"
             view_past_gigs
+        elsif choice == "View Past Gig Artists"
+            view_past_artists
         elsif choice == "Logout"
             welcome
     end
 end
 
 def delete_gig
-    puts "Delete Gig"
-end
-
-def view_all_gigs 
-    puts @fan.gigs
+    prompt = TTY::Prompt.new
+    all_gigs = @fan.gigs
+    choices = all_gigs.map{|gig| gig.name }
+    choice = prompt.select("Please select from the following to delete", choices)
+    deletion_choice = Gig.find_by name: choice
+    deletion_choice.destroy
+    @fan = Fan.find_by(username: @fan.username)
+    puts "Gig deleted"
     main_menu
 end
 
+def view_all_gigs 
+    all_gigs = @fan.gigs
+    puts all_gigs.map{|gig| "#{gig.name} - #{gig.date}"}
+    main_menu
+end
+
+def future_gigs_by_fan
+    future_gigs = self.gigs.select {|gig| if gig.date != nil then gig.date > Date.today end}
+    puts future_gigs.map {|gig| "#{gig.name} - #{gig.date}"} #ABSTRACT THIS OUT
+    main_menu
+ end
+
 def view_past_gigs
-    puts "Past Gigs"
+    past_gigs = @fan.past_gigs_by_fan
+    puts past_gigs.map {|gig| "#{gig.name}"} #ABSTRACT THIS OUT
+    main_menu
+end
+
+def view_past_artists
+    puts @fan.find_all_artists_seen
+    main_menu
 end
 
 def view_future_gigs
-    puts "Future Gigs"
+    puts @fan.future_gigs_by_fan
+    main_menu
 end
 
 def add_gig
@@ -94,7 +118,6 @@ def add_gig
     name = prompt.ask('Please enter the name of the concert/tour', default: ENV['USER'])
     artist_prompt = prompt.ask('Which artist is performing?')
     artist = Artist.find_artist(artist_prompt)
-    fan_id = @fan.id
     city = prompt.ask('Which city is the concert in?', default: ENV['USER'])
     venue = prompt.ask('What is the venue name?', default: ENV['USER'])
     address = prompt.ask('What is the address of the venue?', default: ENV['USER'])
@@ -102,8 +125,15 @@ def add_gig
     date = prompt.ask('What date is the gig?')
     # start_time = prompt.ask('What time does the gig start?', default: ENV['USER'])
     # end_time = prompt.ask('What time does the gig end?', default: ENV['USER'])
-    Gig.create(name: name, city: city, venue: venue, address: address, date: date, artist: artist, fan_id: fan_id) 
+    Gig.create(name: name, city: city, venue: venue, address: address, date: date, artist: artist, fan: @fan) 
     main_menu
 end
 
 end
+
+
+
+# User will click to view all gigs
+# User will select the gig they want to delete
+# Gig gets deleted w/ confirmation message
+# Go back to main menu
