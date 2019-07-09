@@ -69,15 +69,16 @@ def main_menu
             view_past_gigs
         elsif choice == "Logout"
             welcome
-        end
+    end
 end
 
 def delete_gig
     puts "Delete Gig"
 end
 
-def view_all_gigs
-    Gig.all
+def view_all_gigs 
+    puts @fan.gigs
+    main_menu
 end
 
 def view_past_gigs
