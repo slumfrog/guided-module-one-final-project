@@ -6,9 +6,36 @@ class Artist < ActiveRecord::Base
         self.find_by name: artist_prompt
     end
 
-    # def find_fans_of_artist(artist)                           #take an argument of artist
-    #    all_artists = Gig.all.select{|gig| gig.artist == self}
-    #                                                           # Select will return a only an array of what matches our condition
-    # end                                                       # Find all gigs with Gig.all | refer to each instance of Gig as 'gig' | if Gig.artist == self(an artist) return an array of these artist        
+    
+    #find all gigs from an artist that are in the future
+    #first find all gigs of an artist
+    #
+    
+    def past_gigs_by_artist
+        past_gigs = Gig.all.select {|gig| if gig.date != nil then gig.date < Date.today end}
+        past_gigs.select {|gig| gig.artist == self}
+     end
+
+
+     def future_gigs_by_artist
+        past_gigs = Gig.all.select {|gig| if gig.date != nil then gig.date > Date.today end}
+        past_gigs.select {|gig| gig.artist == self}
+     end
+
+    # def future_gigs_by_artist
+    #     all_artist_gigs = Gig.all.select{|gig| gig.artist  == self}
+    #     puts all_artist_gigs.map{|gig| gig.date > Date.today}
+    # end
+
+
+
+    #this works
+    def find_fans_of_artist
+       all_artist_gigs = Gig.all.select{|gig| gig.artist  == self}
+       all_artist_gigs.map{|gig| "#{gig.fan.first_name} aka #{gig.fan.username}"}
+    end
+
+
+
 end
 

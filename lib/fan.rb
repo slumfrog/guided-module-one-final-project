@@ -24,28 +24,31 @@ class Fan < ActiveRecord::Base
       self.password == user_input
    end
 
-   def past_gigs_by_fan
+   def all_gigs #Gives you all of a fans gigs
+      all_gigs = self.gigs
+      puts all_gigs.map{|gig| "#{gig.name} - #{gig.date}"}
+   end
+
+   def past_gigs_by_fan #Gives you a fans gigs from the past - shows name and date
       past_gigs = self.gigs.select {|gig| if gig.date != nil then gig.date < Date.today end}
    end
 
-   def print_gigs_by_name
-      past_gigs_by_fan.map {|gig| "#{gig.name} - #{gig.date}"}
+   def print_past_gigs_by_fan
+      puts past_gigs_by_fan.map {|gig| "#{gig.name} - #{gig.date}"}
    end
 
-   def future_gigs_by_fan
-      future_gigs = self.gigs.select {|gig| if gig.date != nil then gig.date > Date.today end}
-      future_gigs.map {|gig| "#{gig.name} - #{gig.date}"}
+   def future_gigs_by_fan #gives you a fans future gigs - shows name and date
+      self.gigs.select {|gig| if gig.date != nil then gig.date > Date.today end}
    end
 
-   # A user can see a list of all artists they’ve attended gigs for
-   def find_all_artists
-      self.gigs.map{|gig| gig.artist.name}
+   def print_future_gigs_by_fan
+      future_gigs_by_fan.map {|gig| "#{gig.name} - #{gig.date}"}
    end
 
    def find_all_artists_seen
       past_gigs_by_fan.map {|gig| gig.artist.name}
    end
-
+   
 end
 
 
