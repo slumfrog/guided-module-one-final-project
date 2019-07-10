@@ -8,3 +8,4 @@ gem "require_all"
 gem "tty"
 gem 'tty-prompt'
 gem 'faker'
+gem 'colorize'

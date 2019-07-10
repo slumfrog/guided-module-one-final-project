@@ -7,9 +7,21 @@ class UserInterface
     end
 
 def welcome
+    system "clear"
+    2.times do puts "" end
+    str = "
+    .-..-.       .--.  _             
+    : `' :      : .--':_;            
+    : .. :.-..-.: : _ .-. .--.  .--. 
+    : :; :: :; :: :; :: :' .; :`._-.'
+    :_;:_;`._. ;`.__.':_;`._. ;`.__.'
+           .-. :          .-. :      
+           `._.'          `._.'      
+    ".colorize(:color => :white, :background => :red)
+	puts str
     prompt = TTY::Prompt.new
-    choices = ["Existing", "New Fan"]
-    choice = prompt.select("Welcome to MyGigs! Are you a new, or existing fan?", choices)
+    choices = ["Existing".colorize(:red), "New Fan".colorize(:yellow)]
+    choice = prompt.select("Welcome to MyGigs! Are you a new, or existing fan?".colorize(:white), choices)
     if choice == "New Fan"
         new_fan
     else
@@ -19,7 +31,7 @@ end
 
 def user_login # set up if statement - if no errors, continue, otherwise puts error and call method on itself again
     prompt = TTY::Prompt.new
-    username = prompt.ask('Please enter your username', default: ENV['username'])
+    username = prompt.ask('Please enter your username')
     if @fan = Fan.username_validation(username)
         password_login
     else
@@ -28,9 +40,10 @@ def user_login # set up if statement - if no errors, continue, otherwise puts er
     end
 end
 
+
 def password_login # set up if statement - if no errors, continue, otherwise puts error and call method on itself again
     prompt = TTY::Prompt.new
-    password = prompt.mask('Please enter your password', default: ENV['username'])
+    password = prompt.mask('Please enter your password')
     if @fan.password_validation(password) 
         main_menu
     else
@@ -39,18 +52,15 @@ def password_login # set up if statement - if no errors, continue, otherwise put
     end
 end
 
-
 def new_fan
     prompt = TTY::Prompt.new
-    first_name = prompt.ask('Please enter your first name', default: ENV['First name'])
-    last_name = prompt.ask('Please enter your last name', default: ENV['Last name'])
-    username = prompt.ask('Please create your username', default: ENV['Username'])
-    password = prompt.mask('Please create your password', default: ENV['Password'])
+    first_name = prompt.ask('Please enter your first name')
+    last_name = prompt.ask('Please enter your last name')
+    username = prompt.ask('Please create your username')
+    password = prompt.mask('Please create your password')
     Fan.create(first_name: first_name, last_name: last_name, username: username, password: password)
     main_menu
 end
-
-
 
 def main_menu
     prompt = TTY::Prompt.new
@@ -85,6 +95,16 @@ def delete_gig
     main_menu
 end
 
+def view_future_gigs
+    puts @fan.future_gigs_by_fan
+    main_menu
+end
+
+def view_past_artists
+    puts @fan.find_all_artists_seen
+    main_menu
+end
+
 def view_all_gigs 
     all_gigs = @fan.gigs
     puts all_gigs.map{|gig| "#{gig.name} - #{gig.date}"}
@@ -93,7 +113,6 @@ end
 
 def future_gigs_by_fan
     future_gigs = self.gigs.select {|gig| if gig.date != nil then gig.date > Date.today end}
-    puts future_gigs.map {|gig| "#{gig.name} - #{gig.date}"} #ABSTRACT THIS OUT
     main_menu
  end
 
@@ -103,31 +122,9 @@ def view_past_gigs
     main_menu
 end
 
-def view_past_artists
-    puts @fan.find_all_artists_seen
-    main_menu
-end
 
-def view_future_gigs
-    puts @fan.future_gigs_by_fan
-    main_menu
-end
 
-def add_gig
-    prompt = TTY::Prompt.new
-    name = prompt.ask('Please enter the name of the concert/tour', default: ENV['USER'])
-    artist_prompt = prompt.ask('Which artist is performing?')
-    artist = Artist.find_artist(artist_prompt)
-    city = prompt.ask('Which city is the concert in?', default: ENV['USER'])
-    venue = prompt.ask('What is the venue name?', default: ENV['USER'])
-    address = prompt.ask('What is the address of the venue?', default: ENV['USER'])
-    # postcode = prompt.ask('What is the postcode of the venue?', default: ENV['USER'])
-    date = prompt.ask('What date is the gig?')
-    # start_time = prompt.ask('What time does the gig start?', default: ENV['USER'])
-    # end_time = prompt.ask('What time does the gig end?', default: ENV['USER'])
-    Gig.create(name: name, city: city, venue: venue, address: address, date: date, artist: artist, fan: @fan) 
-    main_menu
-end
+
 
 end
 

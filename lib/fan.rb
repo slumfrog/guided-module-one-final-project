@@ -10,17 +10,19 @@ class Fan < ActiveRecord::Base
    #    self.all.map {|fan| fan.password}
    # end
 
+   # def self.fan_first_names
+   #    self.all.map {|fan| fan.first_name}
+   # end
+
+   #username validation - takes a user input as an argument. Uses self (Looks at all instances of Fan, looks at each username and finds the user by whether the user input matches the username)
    def self.username_validation(user_input)
        self.all.find_by(username: user_input)
    end
 
+   #password validation - takes a user input (password attempt) as an argument, looks in to the instance of fan we are in, and checks to see if that instance's password matches the user input
    def password_validation(user_input)
       self.password == user_input
    end
-
-   # def self.fan_first_names
-   #    self.all.map {|fan| fan.first_name}
-   # end
 
    def past_gigs_by_fan
       past_gigs = self.gigs.select {|gig| if gig.date != nil then gig.date < Date.today end}
